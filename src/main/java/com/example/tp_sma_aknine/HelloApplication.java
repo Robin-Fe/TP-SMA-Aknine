@@ -1,7 +1,10 @@
 package com.example.tp_sma_aknine;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observer;
 import javax.swing.JOptionPane;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -62,9 +65,8 @@ public class HelloApplication extends Application {
         primaryStage.setHeight(bounds.getHeight());
         primaryStage.setTitle("Simulation de tri multi-agents");
 
-        Simulation simulation1 = new Simulation(false, 4, 5, 5, 0, 0, 0, 0.1, 0.3, 10, 0.01);
-        simulation1.runSimulation();
-        Simulation simulation = new Simulation(false, simulation1.getListeAgents(), simulation1.getEnvironnement(), /*simulation1.getNbToursMax()*/ 1000, simulation1.getEnvironnement().getE());
+
+        Simulation simulation = new Simulation(5, 5);
 
         GridPane grid = new GridPane();
         GridPane grid2 = new GridPane();
@@ -81,12 +83,11 @@ public class HelloApplication extends Application {
         Image imAObject = new Image("https://i.pinimg.com/originals/8a/71/33/8a71336be732044a9a7cfbb92ee23eb6.jpg", 19, 18, false, false);
         Image imBObject = new Image("https://ak.picdn.net/shutterstock/videos/15506929/thumb/1.jpg", 19, 18, false, false);
 */
-        Image imAgent = new Image("https://www.marianne38.com/wp-content/uploads/cardstock-florence-white-1.jpg", 19, 18, false, false);
+
         Image imVide = new Image("https://upload.wikimedia.org/wikipedia/commons/7/71/Black.png", 19, 18, false, false);
         Image imAObject = new Image("http://retraites-vipassana.fr/wp-content/uploads/2016/06/cropped-carre-rouge.jpg", 19, 18, false, false);
         Image imBObject = new Image("https://www.ecopro-ascenseurs.fr/wp-content/uploads/2017/12/carre-vert-fonce.png", 19, 18, false, false);
         Image imHolding = new Image("https://www.iecd.org/iecd2/wp-content/uploads/2018/09/carre-gris-Copie-2.jpg", 19, 18, false, false);
-
 
 
         grid2.setAlignment(Pos.CENTER);
@@ -108,7 +109,7 @@ public class HelloApplication extends Application {
         btnJeu1.setMinWidth(100);
         btnJeu1.setFont(police);
         btnJeu1.setOnMouseClicked((e) -> {
-            Simulation simulation2 = new Simulation(simulation.verbose, simulation.getEnvironnement().getNbAgents(), simulation.getEnvironnement().getLongMap(), simulation.getEnvironnement().getLargeMap(), simulation.getEnvironnement().getNbObjectsA(), simulation.getEnvironnement().getNbObjectsB(), simulation.getNbToursMax(), simulation.getListeAgents().get(0).getK1(), simulation.getListeAgents().get(0).getK2(), simulation.getListeAgents().get(0).getTsize(), simulation.getListeAgents().get(0).getE());
+            Simulation simulation2 = new Simulation();
             int restart = JOptionPane.showConfirmDialog(null, "Voulez vous vraiment recommencer la simulation ?", "UNE SIMULATION EST EN COURS !", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
             if (restart == JOptionPane.OK_OPTION) {
@@ -230,10 +231,10 @@ public class HelloApplication extends Application {
         rootMenu.setCenter(imgMenu);
         rootMenu.setBottom(boutonMenu);
 
-        ImageView[][] tab = new ImageView[simulation.getEnvironnement().getLongMap()][simulation.getEnvironnement().getLargeMap()];
+        ImageView[][] tab = new ImageView[simulation.getEnvironment().getLongMap()][simulation.getEnvironment().getLargeMap()];
 
-        for (int i = 0; i < simulation.getEnvironnement().getLongMap(); i++) {
-            for (int j = 0; j < simulation.getEnvironnement().getLargeMap(); j++) {
+        for (int i = 0; i < simulation.getEnvironment().getLongMap(); i++) {
+            for (int j = 0; j < simulation.getEnvironment().getLargeMap(); j++) {
                 ImageView img = new ImageView();
                 tab[i][j] = img;
                 grid.add(img, i, j);
@@ -243,38 +244,14 @@ public class HelloApplication extends Application {
         Observer o = (o1, arg) -> {
             Platform.runLater(() -> root.setCenter(grid2));
 
-            final int SIZE_X = simulation.getEnvironnement().getLongMap();
-            final int SIZE_Y = simulation.getEnvironnement().getLargeMap();
+            final int SIZE_X = simulation.getEnvironment().getLongMap();
+            final int SIZE_Y = simulation.getEnvironment().getLargeMap();
             for (int i = 0; i < SIZE_X; i++) {
                 for (int j = 0; j < SIZE_Y; j++) {
-                    /*
-                    if (simulation.getEnvironnement().isFreeOfAgent(i, j) && simulation.getEnvironnement().isFreeOfObject(i, j))
+                    if (simulation.getEnvironment().isFreeOfAgent(i, j)) {
                         tab[i][j].setImage(imVide);
-                    else if (!simulation.getEnvironnement().isFreeOfAgent(i, j) && simulation.getEnvironnement().getAgent(i, j).getHasObject())
-                        tab[i][j].setImage(imHolding);
-                    else if (!simulation.getEnvironnement().isFreeOfAgent(i, j) && !simulation.getEnvironnement().getAgent(i, j).getHasObject() && !simulation.getEnvironnement().isFreeOfObject(i, j))
-                        tab[i][j].setImage(imAgentObject);
-                    else if (!simulation.getEnvironnement().isFreeOfAgent(i, j))
-                        tab[i][j].setImage(imAgent);
-                    else if (!simulation.getEnvironnement().isFreeOfObject(i, j)) {
-                        if (simulation.getEnvironnement().getObject(i, j) instanceof ObjetA)
-                            tab[i][j].setImage(imAObject);
-                        else
-                            tab[i][j].setImage(imBObject);
-                    }
-
-                     */
-                    if (simulation.getEnvironnement().isFreeOfAgent(i, j) && simulation.getEnvironnement().isFreeOfObject(i, j))
-                        tab[i][j].setImage(imVide);
-                    else if (!simulation.getEnvironnement().isFreeOfAgent(i, j) && simulation.getEnvironnement().getAgent(i, j).getHasObject())
-                        tab[i][j].setImage(imHolding);
-                    else if (!simulation.getEnvironnement().isFreeOfAgent(i, j))
-                        tab[i][j].setImage(imAgent);
-                    else if (!simulation.getEnvironnement().isFreeOfObject(i, j)) {
-                        if (simulation.getEnvironnement().getObject(i, j) instanceof ObjetA)
-                            tab[i][j].setImage(imAObject);
-                        else
-                            tab[i][j].setImage(imBObject);
+                    } else {
+                        tab[i][j].setImage(simulation.getEnvironment().getContent(i, j).getImage());
                     }
                 }
             }
@@ -283,7 +260,7 @@ public class HelloApplication extends Application {
         };
 
         simulation.addObserver(o);
-        simulation.getEnvironnement().addObserver(o);
+        simulation.getEnvironment().addObserver(o);
         primaryStage.setScene(sceneMenu);
         primaryStage.show();
     }

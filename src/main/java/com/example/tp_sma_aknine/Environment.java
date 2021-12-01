@@ -6,10 +6,10 @@ import java.util.Observable;
 import java.util.Random;
 
 public class Environment extends Observable {
-    private final List<Agent> listeAgents;
+    private List<Agent> listeAgents;
     private Agent[][] map;
 
-    public Environment(int tailleMapLong, int tailleMapLarge, List<Agent> listeAgents) {
+    public Environment(int tailleMapLong, int tailleMapLarge) {
         this.map = new Agent[tailleMapLong][tailleMapLarge];
         HashMap<Agent, int[]> agentHashMap = new HashMap<>();
         int r1 = new Random().nextInt(tailleMapLong);
@@ -22,8 +22,6 @@ public class Environment extends Observable {
             map[r1][r2] = agent;
             agentHashMap.put(agent, new int[]{r1, r2});
         }
-
-        this.listeAgents = listeAgents;
     }
 
     public void moveAgent(Agent agent, int x, int y) {
@@ -52,5 +50,8 @@ public class Environment extends Observable {
     }
 
     public List<Agent> getListeAgents() { return listeAgents; }
+
+    public void setListeAgents(List<Agent> listeAgents) { this.listeAgents = listeAgents; }
+
 
 }
