@@ -4,10 +4,12 @@ import javafx.scene.image.Image;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 import java.util.Random;
 
-public class Agent {
+public class Agent extends Observable implements Runnable {
 
+    public Thread worker;
     private final Image image;
     private int x;
     private int y;
@@ -17,13 +19,15 @@ public class Agent {
     private MailBox mailBox;
 
 
-    public Agent(Image image, int x, int y, int xGoal, int yGoal, Environment environment) {
+    public Agent(Image image, int x, int y, int xGoal, int yGoal, Environment environment, MailBox mailBox) {
+        this.worker = new Thread(this);
         this.image = image;
         this.x = x;
         this.y = y;
         this.xGoal = xGoal;
         this.yGoal = yGoal;
         this.environment = environment;
+        this.mailBox = mailBox;
     }
 
     public void perception() {
@@ -31,20 +35,40 @@ public class Agent {
 
     }
 
-    public void action(){
+
+    public void move(int x, int y) {
+        if (environment.pickSemaphore()) {
+            Agent agent = this.environment.getContent(x, y);
+            if (agent == null) {
+                this.environment.updateMap(this, this.x, this.y, x, y);
+                this.x = x;
+                this.y = y;
+            } else {
+                this.mailBox.addMessage(agent, x, y);
+            }
+            environment.letSemaphore();
+        } else {
+            long random = new Random().nextInt(2000);
+            try {
+                Thread.sleep(random);
+            } catch (InterruptedException ignored) {
+
+            }
+        }
+    }
+/*
+    public void action() {
         boolean hasToMove = checkMailBox();
         if (hasToMove) {
             List<Coordinate> directions = getFreeDirections();
-            if (directions.isEmpty()){
+            if (directions.isEmpty()) {
                 // ToDo : send message to everyone around
-            }
-            else {
+            } else {
                 Random rand = new Random();
                 Coordinate coordinate = directions.get(rand.nextInt(directions.size()));
                 move(coordinate.getX(), coordinate.getY());
             }
-        }
-        else {
+        } else {
             Coordinate coordinate = new Coordinate(0, 0); // ToDo : select the good coordinate to go
             Agent agent = this.environment.getContent(coordinate.getX(), coordinate.getY());
             if (agent == null)
@@ -52,17 +76,12 @@ public class Agent {
             else
                 sendMessage(agent, coordinate.getX(), coordinate.getY());
         }
-    }
+    }*/
 
 
-    public void move(int x, int y) {
-        assert this.environment.getContent(x, y) == null ;
-        this.environment.updateMap(this, this.x, this.y, x, y);
-        this.x = x;
-        this.y = y;
-    }
 
-    public void sendMessage(Agent agent, int x, int y){
+
+    public void sendMessage(Agent agent, int x, int y) {
         this.mailBox.addMessage(agent, x, y);
     }
 
@@ -100,6 +119,36 @@ public class Agent {
         return y;
     }
 
+    @Override
+    public void run() {
+        int tempspause = 1000;
+        while (!environment.getListeAgents().get(0).checkGlobalGoal()) {
+            perception();
+            int r1 = new Random().nextInt(environment.getXLength());
+            int r2 = new Random().nextInt(environment.getYLength());
+            move(r1, r2);
+            setChanged();
+            notifyObservers();
+            try {
+                Thread.sleep(tempspause);
+            } catch (InterruptedException ignored) {
+
+            }
+        }
+    }
+
+    public void interrupt() {
+        worker.interrupt();
+        setChanged();
+        notifyObservers();
+    }
+
+    public void start() {
+        worker.start();
+        setChanged();
+        notifyObservers();
+    }
+
     public List<Coordinate> getFreeDirections() {
         List<Coordinate> freeDirections = new ArrayList<>();
         boolean up = false;
@@ -115,13 +164,13 @@ public class Agent {
         if (x - 1 >= 0)
             left = this.environment.getContent(x - 1, y) == null;
         if (up)
-            freeDirections.add(new Coordinate(x, y+1));
+            freeDirections.add(new Coordinate(x, y + 1));
         if (down)
-            freeDirections.add(new Coordinate(x, y-1));
+            freeDirections.add(new Coordinate(x, y - 1));
         if (left)
-            freeDirections.add(new Coordinate(x-1, y));
+            freeDirections.add(new Coordinate(x - 1, y));
         if (right)
-            freeDirections.add(new Coordinate(x+1, y));
+            freeDirections.add(new Coordinate(x + 1, y));
         return freeDirections;
     }
 }

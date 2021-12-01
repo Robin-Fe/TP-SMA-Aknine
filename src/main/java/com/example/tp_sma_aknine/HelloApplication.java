@@ -64,7 +64,7 @@ public class HelloApplication extends Application {
         primaryStage.setTitle("Simulation de tri multi-agents");
 
 
-        Simulation simulation = new Simulation(5, 5, 5);
+        Simulation simulation = new Simulation(4, 5, 5);
 
         GridPane grid = new GridPane();
         GridPane grid2 = new GridPane();
@@ -73,20 +73,8 @@ public class HelloApplication extends Application {
 
         Scene sceneMenu = new Scene(rootMenu, 400, 400);
         Scene sceneJeu;
-/*
-        Image imAgent = new Image("https://media.istockphoto.com/vectors/businessman-icon-on-a-black-background-white-series-vector-id490019374?k=20&m=490019374&s=170667a&w=0&h=1_NqU8YLKYRIlFz9LbOjUgmQu-bBQQ2__unvHmLJeeM=", 19, 18, false, false);
-        Image imVide = new Image("https://upload.wikimedia.org/wikipedia/commons/7/71/Black.png", 19, 18, false, false);
-        Image imHolding = new Image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6D1ZDKRaNaXRQUOFtXKRlTjDDXlNhbYEiuOm2zCRiwmwTf4-tkgflcjlzpe0yA2lc3XA&usqp=CAU", 19, 18, false, false);
-        Image imAgentObject = new Image("https://cdn3.iconfinder.com/data/icons/random-04/100/Artboard_1372x-512.png", 19, 18, false, false);
-        Image imAObject = new Image("https://i.pinimg.com/originals/8a/71/33/8a71336be732044a9a7cfbb92ee23eb6.jpg", 19, 18, false, false);
-        Image imBObject = new Image("https://ak.picdn.net/shutterstock/videos/15506929/thumb/1.jpg", 19, 18, false, false);
-*/
 
-        Image imVide = new Image("https://upload.wikimedia.org/wikipedia/commons/7/71/Black.png", 19, 18, false, false);
-        Image imAObject = new Image("http://retraites-vipassana.fr/wp-content/uploads/2016/06/cropped-carre-rouge.jpg", 19, 18, false, false);
-        Image imBObject = new Image("https://www.ecopro-ascenseurs.fr/wp-content/uploads/2017/12/carre-vert-fonce.png", 19, 18, false, false);
-        Image imHolding = new Image("https://www.iecd.org/iecd2/wp-content/uploads/2018/09/carre-gris-Copie-2.jpg", 19, 18, false, false);
-
+        Image imVide = new Image("https://upload.wikimedia.org/wikipedia/commons/7/71/Black.png", 50, 50, false, false);
 
         grid2.setAlignment(Pos.CENTER);
         grid2.add(grid, 1, 1);
