@@ -2,16 +2,14 @@ package com.example.tp_sma_aknine;
 
 import javafx.scene.image.Image;
 
-import java.util.LinkedList;
-
 public class Agent {
 
-    private Image image;
+    private final Image image;
     private int x;
     private int y;
     private final int xGoal;
     private final int yGoal;
-    private Environment environment;
+    private final Environment environment;
     private MailBox mailBox;
 
 
@@ -24,7 +22,7 @@ public class Agent {
         this.environment = environment;
     }
 
-    public void perception(Environment environment) {
+    public void perception() {
 
     }
 
@@ -66,5 +64,13 @@ public class Agent {
 
     public Image getImage() {
         return image;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 }

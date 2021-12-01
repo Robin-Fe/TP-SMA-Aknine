@@ -1,10 +1,8 @@
 package com.example.tp_sma_aknine;
 
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.Observer;
 import javax.swing.JOptionPane;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -66,7 +64,7 @@ public class HelloApplication extends Application {
         primaryStage.setTitle("Simulation de tri multi-agents");
 
 
-        Simulation simulation = new Simulation(5, 5);
+        Simulation simulation = new Simulation(5, 5, 5);
 
         GridPane grid = new GridPane();
         GridPane grid2 = new GridPane();
@@ -109,7 +107,7 @@ public class HelloApplication extends Application {
         btnJeu1.setMinWidth(100);
         btnJeu1.setFont(police);
         btnJeu1.setOnMouseClicked((e) -> {
-            Simulation simulation2 = new Simulation();
+            Simulation simulation2 = new Simulation(simulation.getEnvironment().getNbAgents(), simulation.getEnvironment().getLongMap(), simulation.getEnvironment().getLargeMap());
             int restart = JOptionPane.showConfirmDialog(null, "Voulez vous vraiment recommencer la simulation ?", "UNE SIMULATION EST EN COURS !", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
             if (restart == JOptionPane.OK_OPTION) {
@@ -248,7 +246,7 @@ public class HelloApplication extends Application {
             final int SIZE_Y = simulation.getEnvironment().getLargeMap();
             for (int i = 0; i < SIZE_X; i++) {
                 for (int j = 0; j < SIZE_Y; j++) {
-                    if (simulation.getEnvironment().isFreeOfAgent(i, j)) {
+                    if (simulation.getEnvironment().getContent(i, j) == null) {
                         tab[i][j].setImage(imVide);
                     } else {
                         tab[i][j].setImage(simulation.getEnvironment().getContent(i, j).getImage());

@@ -1,9 +1,7 @@
 package com.example.tp_sma_aknine;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
-import java.util.Random;
 
 public class Environment extends Observable {
     private List<Agent> listeAgents;
@@ -11,30 +9,10 @@ public class Environment extends Observable {
 
     public Environment(int tailleMapLong, int tailleMapLarge) {
         this.map = new Agent[tailleMapLong][tailleMapLarge];
-        HashMap<Agent, int[]> agentHashMap = new HashMap<>();
-        int r1 = new Random().nextInt(tailleMapLong);
-        int r2 = new Random().nextInt(tailleMapLarge);
-        for (Agent agent : listeAgents) {
-            while (!isFreeOfAgent(r1, r2)) {
-                r1 = new Random().nextInt(tailleMapLong);
-                r2 = new Random().nextInt(tailleMapLarge);
-            }
-            map[r1][r2] = agent;
-            agentHashMap.put(agent, new int[]{r1, r2});
-        }
-    }
-
-    public void moveAgent(Agent agent, int x, int y) {
-        setChanged();
-        notifyObservers();
-    }
-
-    public boolean isFreeOfAgent(int x, int y) {
-        return map[x][y] == null;
     }
 
     public Agent getContent(int x, int y) {
-        return (Agent) map[x][y];
+        return map[x][y];
     }
 
     public int getNbAgents() {
@@ -51,7 +29,20 @@ public class Environment extends Observable {
 
     public List<Agent> getListeAgents() { return listeAgents; }
 
-    public void setListeAgents(List<Agent> listeAgents) { this.listeAgents = listeAgents; }
+    public void setListeAgents(List<Agent> listeAgents) {
+        this.listeAgents = listeAgents;
+        for (Agent agent : listeAgents) {
+            map[agent.getX()][agent.getY()] = agent;
+        }
+        setChanged();
+        notifyObservers();
+    }
 
-
+    public void updateMap(Agent agent, int oldX, int oldY, int newX, int newY){
+        assert this.map[oldX][oldY] == agent && this.map[newX][newY] == null;
+        this.map[oldX][oldY] = null;
+        this.map[newX][newY] = agent;
+        setChanged();
+        notifyObservers();
+    }
 }

@@ -18,6 +18,4 @@ public class MailBox {
         this.box.remove(checker);
         return messages;
     }
-
-
 }

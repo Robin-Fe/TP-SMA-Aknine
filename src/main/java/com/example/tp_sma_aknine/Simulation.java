@@ -5,6 +5,7 @@ import javafx.scene.image.Image;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
+import java.util.Random;
 
 public class Simulation extends Observable implements Runnable {
 
@@ -12,10 +13,9 @@ public class Simulation extends Observable implements Runnable {
     private final List<Agent> listeAgents;
     private final Environment environment;
     private int score;
-    private final int nbToursMax;
 
-    public Simulation(int nbAgents, int tailleMapLong, int tailleMapLarge, int nbObjectsA, int nbObjectsB, int nbToursMax, double k1, double k2, int Tsize, double e) {
-        Environment environment = new Environment (5, 5);
+    public Simulation(int nbAgents, int tailleMapLong, int tailleMapLarge) {
+        Environment environment = new Environment (tailleMapLong, tailleMapLarge);
         List<Agent> listeAgents = new ArrayList<>();
         Image imSoleil = new Image("https://www.marianne38.com/wp-content/uploads/cardstock-florence-white-1.jpg", 19, 18, false, false);
         Image imAObject = new Image("http://retraites-vipassana.fr/wp-content/uploads/2016/06/cropped-carre-rouge.jpg", 19, 18, false, false);
@@ -24,23 +24,25 @@ public class Simulation extends Observable implements Runnable {
         Agent soleil = new Agent(imSoleil, 0, 2, 3, 1, environment);
         listeAgents.add(soleil);
 
+        environment.setListeAgents(listeAgents);
         this.listeAgents = listeAgents;
         this.environment = environment;
         this.score = 0;
-        this.nbToursMax = nbToursMax;
     }
 
 
     @Override
     public void run() {
         int nbTours = 0;
-        long tempspause = 1;
-        while (nbTours < nbToursMax) {
+        long tempspause = 100;
+        while (!this.listeAgents.get(0).checkGlobalGoal()) {
             nbTours++;
 
             for (Agent agent : this.listeAgents) {
-                agent.perception(this.environment);
-                agent.action(environment);
+                agent.perception();
+                int r1 = new Random().nextInt(environment.getLongMap());
+                int r2 = new Random().nextInt(environment.getLargeMap());
+                agent.move(r1, r2);
                 setChanged();
                 notifyObservers();
                 try {
@@ -53,7 +55,7 @@ public class Simulation extends Observable implements Runnable {
             setChanged();
             notifyObservers();
             try {
-                Thread.sleep(50);
+                Thread.sleep(500);
             } catch (InterruptedException ignored) {
 
             }
@@ -76,10 +78,6 @@ public class Simulation extends Observable implements Runnable {
 
     public int getScore() {
         return this.score;
-    }
-
-    public int getNbToursMax() {
-        return this.nbToursMax;
     }
 
     public Environment getEnvironment() {
