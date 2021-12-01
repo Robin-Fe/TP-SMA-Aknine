@@ -107,7 +107,7 @@ public class HelloApplication extends Application {
         btnJeu1.setMinWidth(100);
         btnJeu1.setFont(police);
         btnJeu1.setOnMouseClicked((e) -> {
-            Simulation simulation2 = new Simulation(simulation.getEnvironment().getNbAgents(), simulation.getEnvironment().getLongMap(), simulation.getEnvironment().getLargeMap());
+            Simulation simulation2 = new Simulation(simulation.getEnvironment().getNbAgents(), simulation.getEnvironment().getXLength(), simulation.getEnvironment().getYLength());
             int restart = JOptionPane.showConfirmDialog(null, "Voulez vous vraiment recommencer la simulation ?", "UNE SIMULATION EST EN COURS !", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
             if (restart == JOptionPane.OK_OPTION) {
@@ -229,10 +229,10 @@ public class HelloApplication extends Application {
         rootMenu.setCenter(imgMenu);
         rootMenu.setBottom(boutonMenu);
 
-        ImageView[][] tab = new ImageView[simulation.getEnvironment().getLongMap()][simulation.getEnvironment().getLargeMap()];
+        ImageView[][] tab = new ImageView[simulation.getEnvironment().getXLength()][simulation.getEnvironment().getYLength()];
 
-        for (int i = 0; i < simulation.getEnvironment().getLongMap(); i++) {
-            for (int j = 0; j < simulation.getEnvironment().getLargeMap(); j++) {
+        for (int i = 0; i < simulation.getEnvironment().getXLength(); i++) {
+            for (int j = 0; j < simulation.getEnvironment().getYLength(); j++) {
                 ImageView img = new ImageView();
                 tab[i][j] = img;
                 grid.add(img, i, j);
@@ -242,8 +242,8 @@ public class HelloApplication extends Application {
         Observer o = (o1, arg) -> {
             Platform.runLater(() -> root.setCenter(grid2));
 
-            final int SIZE_X = simulation.getEnvironment().getLongMap();
-            final int SIZE_Y = simulation.getEnvironment().getLargeMap();
+            final int SIZE_X = simulation.getEnvironment().getXLength();
+            final int SIZE_Y = simulation.getEnvironment().getYLength();
             for (int i = 0; i < SIZE_X; i++) {
                 for (int j = 0; j < SIZE_Y; j++) {
                     if (simulation.getEnvironment().getContent(i, j) == null) {

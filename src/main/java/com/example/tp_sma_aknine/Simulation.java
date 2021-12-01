@@ -14,8 +14,8 @@ public class Simulation extends Observable implements Runnable {
     private final Environment environment;
     private int score;
 
-    public Simulation(int nbAgents, int tailleMapLong, int tailleMapLarge) {
-        Environment environment = new Environment (tailleMapLong, tailleMapLarge);
+    public Simulation(int nbAgents, int xLength, int yLength) {
+        Environment environment = new Environment (xLength, yLength);
         List<Agent> listeAgents = new ArrayList<>();
         Image imSoleil = new Image("https://www.marianne38.com/wp-content/uploads/cardstock-florence-white-1.jpg", 19, 18, false, false);
         Image imAObject = new Image("http://retraites-vipassana.fr/wp-content/uploads/2016/06/cropped-carre-rouge.jpg", 19, 18, false, false);
@@ -40,8 +40,8 @@ public class Simulation extends Observable implements Runnable {
 
             for (Agent agent : this.listeAgents) {
                 agent.perception();
-                int r1 = new Random().nextInt(environment.getLongMap());
-                int r2 = new Random().nextInt(environment.getLargeMap());
+                int r1 = new Random().nextInt(environment.getXLength());
+                int r2 = new Random().nextInt(environment.getYLength());
                 agent.move(r1, r2);
                 setChanged();
                 notifyObservers();

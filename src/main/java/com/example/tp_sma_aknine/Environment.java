@@ -7,8 +7,8 @@ public class Environment extends Observable {
     private List<Agent> listeAgents;
     private Agent[][] map;
 
-    public Environment(int tailleMapLong, int tailleMapLarge) {
-        this.map = new Agent[tailleMapLong][tailleMapLarge];
+    public Environment(int xLength, int yLength) {
+        this.map = new Agent[xLength][yLength];
     }
 
     public Agent getContent(int x, int y) {
@@ -19,11 +19,11 @@ public class Environment extends Observable {
         return this.listeAgents.size();
     }
 
-    public int getLongMap() {
+    public int getXLength() {
         return this.map.length;
     }
 
-    public int getLargeMap() {
+    public int getYLength() {
         return this.map[0].length;
     }
 
