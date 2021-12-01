@@ -9,8 +9,8 @@ public class Agent {
     private Image image;
     private int x;
     private int y;
-    private int xGoal;
-    private int yGoal;
+    private final int xGoal;
+    private final int yGoal;
     private Environment environment;
     private MailBox mailBox;
 
@@ -28,21 +28,32 @@ public class Agent {
 
     }
 
-    public boolean move (int x, int y) {
-        return true;
+
+    public void move (int x, int y) {
+        Agent agent = this.environment.getContent(x,y);
+        if (agent == null){
+            this.environment.updateMap(this, this.x, this.y, x, y);
+            this.x = x;
+            this.y = y;
+        }
+        else {
+            this.mailBox.addMessage(agent, x, y);
+        }
     }
 
-    public boolean sendMessage(Agent target, int freeX, int freeY) {
-        mailBox.addMessage(target, freeX, freeY);
-        return true;
-    }
 
     public boolean checkMailBox() {
-        LinkedList<Message> messages = mailBox.deliverMessages(this);
-        return true;
+        for (Message message : mailBox.deliverMessages(this)){
+            if (message.getFreeX() == this.x && message.getFreeY() == this.y){
+                return true;
+            }
+        }
+        return false;
     }
 
-    public boolean checkPersonalGoal() { return (this.x == this.xGoal && this.y == this.yGoal); }
+    public boolean checkPersonalGoal() {
+        return (this.x == this.xGoal && this.y == this.yGoal);
+    }
 
     public boolean checkGlobalGoal() {
         for (Agent agent : environment.getListeAgents()) {

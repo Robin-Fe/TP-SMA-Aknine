@@ -9,4 +9,11 @@ public class Message {
         this.freeY = freeY;
     }
 
+    public int getFreeX() {
+        return freeX;
+    }
+
+    public int getFreeY() {
+        return freeY;
+    }
 }
