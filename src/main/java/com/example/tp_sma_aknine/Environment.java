@@ -16,10 +16,6 @@ public class Environment extends Observable {
         return map[x][y];
     }
 
-    public int getNbAgents() {
-        return this.listeAgents.size();
-    }
-
     public int getXLength() {
         return this.map.length;
     }
@@ -28,7 +24,9 @@ public class Environment extends Observable {
         return this.map[0].length;
     }
 
-    public List<Agent> getListeAgents() { return listeAgents; }
+    public List<Agent> getListeAgents() {
+        return listeAgents;
+    }
 
     public void setListeAgents(List<Agent> listeAgents) {
         this.listeAgents = listeAgents;
@@ -39,7 +37,7 @@ public class Environment extends Observable {
         notifyObservers();
     }
 
-    public void updateMap(Agent agent, int oldX, int oldY, int newX, int newY){
+    public void updateMap(Agent agent, int oldX, int oldY, int newX, int newY) {
         semaphore = true;
         setChanged();
         notifyObservers();
@@ -50,7 +48,9 @@ public class Environment extends Observable {
         notifyObservers();
     }
 
-    public boolean getSemaphore () { return semaphore; }
+    public boolean getSemaphore() {
+        return semaphore;
+    }
 
     public boolean pickSemaphore() {
         if (getSemaphore()) {

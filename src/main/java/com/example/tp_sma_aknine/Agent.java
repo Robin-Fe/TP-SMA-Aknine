@@ -1,11 +1,11 @@
 package com.example.tp_sma_aknine;
 
 import javafx.scene.image.Image;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Random;
+
 
 public class Agent extends Observable implements Runnable {
 
@@ -31,10 +31,8 @@ public class Agent extends Observable implements Runnable {
     }
 
     public void perception() {
-
-
+        //TODO : A implementer
     }
-
 
     public void move(int x, int y) {
         if (environment.pickSemaphore()) {
@@ -79,8 +77,6 @@ public class Agent extends Observable implements Runnable {
     }*/
 
 
-
-
     public void sendMessage(Agent agent, int x, int y) {
         this.mailBox.addMessage(agent, x, y);
     }
@@ -119,18 +115,30 @@ public class Agent extends Observable implements Runnable {
         return y;
     }
 
+    public int getxGoal() {
+        return xGoal;
+    }
+
+    public int getyGoal() {
+        return yGoal;
+    }
+
     @Override
     public void run() {
-        int tempspause = 1000;
+        int tempspause = 700;
         while (!environment.getListeAgents().get(0).checkGlobalGoal()) {
             perception();
-            int r1 = new Random().nextInt(environment.getXLength());
-            int r2 = new Random().nextInt(environment.getYLength());
-            move(r1, r2);
-            setChanged();
-            notifyObservers();
+            if (!checkPersonalGoal()) {
+                List<Coordinate> freeDirections = getFreeDirections();
+                if (freeDirections.size() > 0) {
+                    Coordinate nextMove = freeDirections.get(new Random().nextInt(freeDirections.size()));
+                    move(nextMove.getX(), nextMove.getY());
+                }
+                setChanged();
+                notifyObservers();
+            }
             try {
-                Thread.sleep(tempspause);
+                Thread.sleep(tempspause + new Random().nextInt(300));
             } catch (InterruptedException ignored) {
 
             }
@@ -144,6 +152,7 @@ public class Agent extends Observable implements Runnable {
     }
 
     public void start() {
+        this.worker = new Thread(this);
         worker.start();
         setChanged();
         notifyObservers();

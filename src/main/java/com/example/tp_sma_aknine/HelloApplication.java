@@ -55,6 +55,36 @@ public class HelloApplication extends Application {
         LabelVideD.setMinHeight(100);
         LabelVideD.setMinWidth(400);
 
+        Label LabelSim = new Label("Simulation");
+        LabelVide.setFont(police);
+        LabelVide.setStyle("-fx-alignment: center; -fx-background-color:MediumOrchid; -fx-font-weight: bold; -fx-font-size: 30px");
+        LabelVide.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        LabelVide.setMinHeight(100);
+        LabelVide.setMinWidth(400);
+
+        Label LabelCible = new Label("Cible");
+        LabelVide.setFont(police);
+        LabelVide.setStyle("-fx-alignment: center; -fx-background-color:MediumOrchid; -fx-font-weight: bold; -fx-font-size: 30px");
+        LabelVide.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        LabelVide.setMinHeight(100);
+        LabelVide.setMinWidth(400);
+
+        VBox labelsSIM = new VBox();
+        labelsSIM.setMinWidth(300);
+        labelsSIM.setStyle("-fx-alignment: center; -fx-background-color:MediumOrchid; -fx-font-weight: bold; -fx-font-size: 30px");
+        labelsSIM.setSpacing(40);
+        labelsSIM.setAlignment(Pos.CENTER);
+        labelsSIM.setPadding(new Insets(10, 10, 100, 10));
+        labelsSIM.getChildren().add(LabelSim);
+
+        VBox labelsCIBLE = new VBox();
+        labelsCIBLE.setMinWidth(300);
+        labelsCIBLE.setStyle("-fx-alignment: center; -fx-background-color:MediumOrchid; -fx-font-weight: bold; -fx-font-size: 30px");
+        labelsCIBLE.setSpacing(40);
+        labelsCIBLE.setAlignment(Pos.CENTER);
+        labelsCIBLE.setPadding(new Insets(10, 10, 100, 10));
+        labelsCIBLE.getChildren().add(LabelCible);
+
         Screen screen = Screen.getPrimary();
         Rectangle2D bounds = screen.getVisualBounds();
         primaryStage.setX(bounds.getMinX());
@@ -64,9 +94,10 @@ public class HelloApplication extends Application {
         primaryStage.setTitle("Simulation de tri multi-agents");
 
 
-        Simulation simulation = new Simulation(4, 5, 5);
+        Simulation simulation = new Simulation(13, 5, 5);
 
         GridPane grid = new GridPane();
+        GridPane grid3 = new GridPane();
         GridPane grid2 = new GridPane();
 
         BorderPane rootMenu = new BorderPane();
@@ -77,7 +108,11 @@ public class HelloApplication extends Application {
         Image imVide = new Image("https://upload.wikimedia.org/wikipedia/commons/7/71/Black.png", 50, 50, false, false);
 
         grid2.setAlignment(Pos.CENTER);
-        grid2.add(grid, 1, 1);
+        grid2.add(labelsSIM, 1, 1);
+        grid2.add(grid, 1, 2);
+        grid2.add(labelsCIBLE, 1, 3);
+        grid2.add(grid3, 1, 4);
+        grid.setPadding(new Insets(0, 0, 10, 0));
 
         BorderPane root = new BorderPane();
 
@@ -95,18 +130,20 @@ public class HelloApplication extends Application {
         btnJeu1.setMinWidth(100);
         btnJeu1.setFont(police);
         btnJeu1.setOnMouseClicked((e) -> {
-            Simulation simulation2 = new Simulation(simulation.getEnvironment().getNbAgents(), simulation.getEnvironment().getXLength(), simulation.getEnvironment().getYLength());
+            simulation.interrupt();
             int restart = JOptionPane.showConfirmDialog(null, "Voulez vous vraiment recommencer la simulation ?", "UNE SIMULATION EST EN COURS !", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
             if (restart == JOptionPane.OK_OPTION) {
                 try {
-                    simulation2.start();
+                    //simulation.reset();
+                    simulation.start();
                     Platform.runLater(() -> root.setCenter(grid2));
                 } catch (Exception ignored) {
 
                 }
-            } else
+            } else {
                 simulation.start();
+            }
 
         });
 
@@ -123,7 +160,7 @@ public class HelloApplication extends Application {
         btnJeu2.setMinWidth(100);
         btnJeu2.setFont(police);
         btnJeu2.setOnMouseClicked((e) -> {
-
+            simulation.interrupt();
             int quitter = JOptionPane.showConfirmDialog(null, "Voulez vous vraiment retourner au menu principal ?", "UNE SIMULATION EST EN COURS !", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
             if (quitter == JOptionPane.OK_OPTION) {
@@ -209,6 +246,9 @@ public class HelloApplication extends Application {
         Image iconPM = new Image("https://static.vecteezy.com/system/resources/previews/001/186/943/non_2x/green-play-button-png.png", 200, 200, false, false);
         imgMenu.setImage(iconPM);
         imgMenu.setPreserveRatio(true);
+        ImageView bravo = new ImageView();
+        Image imBravo = new Image("https://toppng.com/uploads/preview/success-stamp-png-denied-11562900035oyswsfdmg9.png");
+        bravo.setImage(imBravo);
 
         rootMenu.setTop(topLabel);
         rootMenu.setLeft(LabelVide);
@@ -227,11 +267,29 @@ public class HelloApplication extends Application {
             }
         }
 
+        ImageView[][] tab2 = new ImageView[simulation.getEnvironment().getXLength()][simulation.getEnvironment().getYLength()];
+
+        for (int i = 0; i < simulation.getEnvironment().getXLength(); i++) {
+            for (int j = 0; j < simulation.getEnvironment().getYLength(); j++) {
+                ImageView img = new ImageView();
+                tab2[i][j] = img;
+                grid3.add(img, i, j);
+            }
+        }
+        final int SIZE_X = simulation.getEnvironment().getXLength();
+        final int SIZE_Y = simulation.getEnvironment().getYLength();
+        for (int i = 0; i < SIZE_X; i++) {
+            for (int j = 0; j < SIZE_Y; j++) {
+                tab2[i][j].setImage(imVide);
+            }
+        }
+        for (Agent agent : simulation.getListeAgents()) {
+            tab2[agent.getxGoal()][agent.getyGoal()].setImage(agent.getImage());
+        }
+
         Observer o = (o1, arg) -> {
             Platform.runLater(() -> root.setCenter(grid2));
 
-            final int SIZE_X = simulation.getEnvironment().getXLength();
-            final int SIZE_Y = simulation.getEnvironment().getYLength();
             for (int i = 0; i < SIZE_X; i++) {
                 for (int j = 0; j < SIZE_Y; j++) {
                     if (simulation.getEnvironment().getContent(i, j) == null) {
@@ -242,7 +300,15 @@ public class HelloApplication extends Application {
                 }
             }
 
-            Platform.runLater(() -> labelScore.setText("Score  : " + simulation.getScore() + " Points"));
+            Platform.runLater(() -> labelScore.setText("Temps écoulé : " + simulation.getScore() + " s"));
+
+            if (simulation.getListeAgents().get(0).checkGlobalGoal()) {
+                Platform.runLater(() -> {
+                    root.setCenter(bravo);
+                    primaryStage.show();
+                    simulation.interrupt();
+                });
+            }
         };
 
         simulation.addObserver(o);
