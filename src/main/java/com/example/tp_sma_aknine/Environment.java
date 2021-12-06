@@ -53,6 +53,7 @@ public class Environment extends Observable {
     }
 
     public boolean pickSemaphore() {
+        // ToDo : increment score
         if (getSemaphore()) {
             semaphore = false;
             return true;

@@ -28,7 +28,6 @@ import javafx.stage.Stage;
 public class HelloApplication extends Application {
     @Override
     public void start(Stage primaryStage) {
-
         String buttonStyle = """
                 -fx-background-color: \r  linear-gradient(#ffd65b, #e68400),\r  linear-gradient(#ffef84, #f2ba44),\r  linear-gradient(#ffea6a, #efaa22),\r\040
                 linear-gradient(#ffe657 0%, #f8c202 50%, #eea10b 100%),\r  linear-gradient(from 0% 0% to 15% 50%, rgba(255,255,255,0.9), rgba(255,255,255,0));\r
@@ -94,7 +93,7 @@ public class HelloApplication extends Application {
         primaryStage.setTitle("Simulation de tri multi-agents");
 
 
-        Simulation simulation = new Simulation(13, 5, 5);
+        Simulation simulation = new Simulation(10, 5, 5);
 
         GridPane grid = new GridPane();
         GridPane grid3 = new GridPane();

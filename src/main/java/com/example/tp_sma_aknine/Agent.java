@@ -11,8 +11,10 @@ public class Agent extends Observable implements Runnable {
 
     public Thread worker;
     private final Image image;
+    //ToDo : replace by coordinate
     private int x;
     private int y;
+    //ToDo : replace by coordinate
     private final int xGoal;
     private final int yGoal;
     private final Environment environment;
@@ -30,9 +32,6 @@ public class Agent extends Observable implements Runnable {
         this.mailBox = mailBox;
     }
 
-    public void perception() {
-        //TODO : A implementer
-    }
 
     public void move(int x, int y) {
         if (environment.pickSemaphore()) {
@@ -54,27 +53,34 @@ public class Agent extends Observable implements Runnable {
             }
         }
     }
-/*
+
     public void action() {
         boolean hasToMove = checkMailBox();
-        if (hasToMove) {
-            List<Coordinate> directions = getFreeDirections();
-            if (directions.isEmpty()) {
-                // ToDo : send message to everyone around
+        if (!checkPersonalGoal() || hasToMove) {
+            if (hasToMove) {
+                List<Coordinate> directions = getFreeDirections();
+                if (directions.isEmpty()) {
+                    // ToDo : send message to everyone around
+                } else {
+                    Random rand = new Random();
+                    Coordinate coordinate = directions.get(rand.nextInt(directions.size()));
+                    move(coordinate.getX(), coordinate.getY());
+
+                }
             } else {
-                Random rand = new Random();
-                Coordinate coordinate = directions.get(rand.nextInt(directions.size()));
-                move(coordinate.getX(), coordinate.getY());
+                Coordinate coordinate = getDirection();
+                Agent agent = this.environment.getContent(coordinate.getX(), coordinate.getY());
+                if (agent == null){
+                    move(coordinate.getX(), coordinate.getY());
+                }
+
+                else{
+                    sendMessage(agent, coordinate.getX(), coordinate.getY());
+                }
             }
-        } else {
-            Coordinate coordinate = new Coordinate(0, 0); // ToDo : select the good coordinate to go
-            Agent agent = this.environment.getContent(coordinate.getX(), coordinate.getY());
-            if (agent == null)
-                move(coordinate.getX(), coordinate.getY());
-            else
-                sendMessage(agent, coordinate.getX(), coordinate.getY());
         }
-    }*/
+
+    }
 
 
     public void sendMessage(Agent agent, int x, int y) {
@@ -82,9 +88,11 @@ public class Agent extends Observable implements Runnable {
     }
 
     public boolean checkMailBox() {
-        for (Message message : mailBox.deliverMessages(this)) {
-            if (message.getFreeX() == this.x && message.getFreeY() == this.y) {
-                return true;
+        if (mailBox.deliverMessages(this) != null){
+            for (Message message : mailBox.deliverMessages(this)) {
+                if (message.getFreeX() == this.x && message.getFreeY() == this.y) {
+                    return true;
+                }
             }
         }
         return false;
@@ -127,16 +135,18 @@ public class Agent extends Observable implements Runnable {
     public void run() {
         int tempspause = 700;
         while (!environment.getListeAgents().get(0).checkGlobalGoal()) {
-            perception();
-            if (!checkPersonalGoal()) {
-                List<Coordinate> freeDirections = getFreeDirections();
-                if (freeDirections.size() > 0) {
-                    Coordinate nextMove = freeDirections.get(new Random().nextInt(freeDirections.size()));
-                    move(nextMove.getX(), nextMove.getY());
-                }
-                setChanged();
-                notifyObservers();
-            }
+            action();
+//            if (!checkPersonalGoal()) {
+//                List<Coordinate> freeDirections = getFreeDirections();
+//                if (freeDirections.size() > 0) {
+//                    Coordinate nextMove = freeDirections.get(new Random().nextInt(freeDirections.size()));
+//                    move(nextMove.getX(), nextMove.getY());
+//                }
+//                setChanged();
+//                notifyObservers();
+//            }
+            setChanged();
+            notifyObservers();
             try {
                 Thread.sleep(tempspause + new Random().nextInt(300));
             } catch (InterruptedException ignored) {
@@ -181,5 +191,38 @@ public class Agent extends Observable implements Runnable {
         if (right)
             freeDirections.add(new Coordinate(x + 1, y));
         return freeDirections;
+    }
+
+    public Coordinate getDirection(){
+        ArrayList<Coordinate> objectiveDirections = new ArrayList<>();
+        Coordinate goal = new Coordinate(xGoal, yGoal);
+        if (xGoal > x){
+            objectiveDirections.add(new Coordinate(x+1, y)) ;
+        }
+        if (xGoal < x){
+            objectiveDirections.add(new Coordinate(x-1, y)) ;
+        }
+        if (yGoal > y){
+            objectiveDirections.add(new Coordinate(x, y+1)) ;
+        }
+        if (yGoal < y){
+            objectiveDirections.add(new Coordinate(x, y-1)) ;
+        }
+
+        List<Coordinate> freeDirections = getFreeDirections();
+        List<Coordinate> bestDirections = (List<Coordinate>) objectiveDirections.clone();
+        for (Coordinate coordinate : objectiveDirections){
+            if (!(freeDirections.contains(coordinate))){
+                bestDirections.remove(coordinate);
+            }
+        }
+        if (bestDirections.isEmpty()){
+            Random rand = new Random();
+            return objectiveDirections.get(rand.nextInt(objectiveDirections.size()));
+        }
+        else {
+            Random rand = new Random();
+            return bestDirections.get(rand.nextInt(bestDirections.size()));
+        }
     }
 }
