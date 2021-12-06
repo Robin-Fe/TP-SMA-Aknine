@@ -6,14 +6,13 @@ import java.util.Map;
 
 public class MailBox {
     private final HashMap<Agent, LinkedList<Message>> box = new HashMap<>();
+    private boolean semaphore = true;
 
     public MailBox() {}
 
-    public void addMessage(Agent target, int freeX, int freeY) {
+    public void addMessage(Agent target, Coordinate coordinate) {
         this.box.computeIfAbsent(target, k -> new LinkedList<>());
-        this.box.get(target).add(new Message(freeX, freeY));
-        LinkedList<Message> messages = this.box.get(target);
-        System.out.println(messages);
+        this.box.get(target).add(new Message(coordinate));
     }
 
     public LinkedList<Message> deliverMessages(Agent checker) {
@@ -26,5 +25,22 @@ public class MailBox {
             }
         }
     return new LinkedList<>();
+    }
+
+    public boolean getSemaphore() {
+        return semaphore;
+    }
+
+    public boolean pickSemaphore() {
+        // ToDo : increment score
+        if (getSemaphore()) {
+            semaphore = false;
+            return true;
+        }
+        return false;
+    }
+
+    public void letSemaphore() {
+        semaphore = true;
     }
 }

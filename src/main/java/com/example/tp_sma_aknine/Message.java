@@ -1,19 +1,13 @@
 package com.example.tp_sma_aknine;
 
 public class Message {
-    private final int freeX;
-    private final int freeY;
+    private final Coordinate coordinate;
 
-    public Message(int freeX, int freeY) {
-        this.freeX = freeX;
-        this.freeY = freeY;
+    public Message(Coordinate coordinate) {
+        this.coordinate = coordinate;
     }
 
-    public int getFreeX() {
-        return freeX;
-    }
-
-    public int getFreeY() {
-        return freeY;
+    public Coordinate getCoordinate() {
+        return this.coordinate;
     }
 }

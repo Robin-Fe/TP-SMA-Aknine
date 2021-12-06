@@ -93,7 +93,7 @@ public class HelloApplication extends Application {
         primaryStage.setTitle("Simulation de tri multi-agents");
 
 
-        Simulation simulation = new Simulation(10, 5, 5);
+        Simulation simulation = new Simulation(5, 5, 5);
 
         GridPane grid = new GridPane();
         GridPane grid3 = new GridPane();
@@ -283,7 +283,7 @@ public class HelloApplication extends Application {
             }
         }
         for (Agent agent : simulation.getListeAgents()) {
-            tab2[agent.getxGoal()][agent.getyGoal()].setImage(agent.getImage());
+            tab2[agent.getGoal().getX()][agent.getGoal().getY()].setImage(agent.getImage());
         }
 
         Observer o = (o1, arg) -> {
@@ -291,10 +291,10 @@ public class HelloApplication extends Application {
 
             for (int i = 0; i < SIZE_X; i++) {
                 for (int j = 0; j < SIZE_Y; j++) {
-                    if (simulation.getEnvironment().getContent(i, j) == null) {
+                    if (simulation.getEnvironment().getContent(new Coordinate(i,j)) == null) {
                         tab[i][j].setImage(imVide);
                     } else {
-                        tab[i][j].setImage(simulation.getEnvironment().getContent(i, j).getImage());
+                        tab[i][j].setImage(simulation.getEnvironment().getContent(new Coordinate(i,j)).getImage());
                     }
                 }
             }

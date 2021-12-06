@@ -31,21 +31,19 @@ public class Simulation extends Observable implements Runnable {
         Image imMarron = new Image("https://www.couleursetreliefs.fr/wp-content/uploads/2016/05/brun-marron-n%C2%B02043-schjerning-sans-plomb.jpg", 50, 50, false, false);
         Image imVertClair = new Image("https://fitostic.com/wp-content/uploads/2021/08/hqdefault-3.jpg", 50, 50, false, false);
         Image imBleuClair = new Image("https://www.couleursetreliefs.fr/wp-content/uploads/2015/01/bleu-clair-n%C2%B026-schjerning-plomb.jpg", 50, 50, false, false);
-
-        listeAgents.add(new Agent(imBlanc, 0, 2, 3, 1, environment, mailBox));
-        listeAgents.add(new Agent(imRouge, 1, 2, 1, 1, environment, mailBox));
-        listeAgents.add(new Agent(imVert, 3, 0, 2, 3, environment, mailBox));
-        listeAgents.add(new Agent(imGris, 4, 2, 4, 4, environment, mailBox));
-        listeAgents.add(new Agent(imBleu, 2, 2, 0, 1, environment, mailBox));
-        listeAgents.add(new Agent(imCyan, 1, 4, 4, 0, environment, mailBox));
-        listeAgents.add(new Agent(imJaune, 4, 0, 3, 3, environment, mailBox));
-        listeAgents.add(new Agent(imMagenta, 3, 1, 1, 4, environment, mailBox));
-        listeAgents.add(new Agent(imOrange, 0, 0, 3, 2, environment, mailBox));
-        listeAgents.add(new Agent(imRose, 1, 1, 0, 4, environment, mailBox));
-        listeAgents.add(new Agent(imMarron, 3, 3, 4, 3, environment, mailBox));
-        listeAgents.add(new Agent(imVertClair, 4, 4, 0, 3, environment, mailBox));
-        listeAgents.add(new Agent(imBleuClair, 0, 1, 4, 1, environment, mailBox));
-
+        listeAgents.add(new Agent(imBlanc, new Coordinate(0,2), new Coordinate(3,1), environment, mailBox));
+        listeAgents.add(new Agent(imRouge, new Coordinate(1,2), new Coordinate(1,1), environment, mailBox));
+        listeAgents.add(new Agent(imVert, new Coordinate(3,0), new Coordinate(2,3), environment, mailBox));
+        listeAgents.add(new Agent(imGris, new Coordinate(4,2), new Coordinate(4,4), environment, mailBox));
+        listeAgents.add(new Agent(imBleu, new Coordinate(2,2), new Coordinate(0,1), environment, mailBox));
+        listeAgents.add(new Agent(imCyan, new Coordinate(1,4), new Coordinate(4,0), environment, mailBox));
+        listeAgents.add(new Agent(imJaune, new Coordinate(4,0), new Coordinate(3,3), environment, mailBox));
+        listeAgents.add(new Agent(imMagenta, new Coordinate(3,1), new Coordinate(1,4), environment, mailBox));
+        listeAgents.add(new Agent(imOrange, new Coordinate(0,0), new Coordinate(3,2), environment, mailBox));
+        listeAgents.add(new Agent(imRose, new Coordinate(1,1), new Coordinate(0,4), environment, mailBox));
+        listeAgents.add(new Agent(imMarron, new Coordinate(3,3), new Coordinate(4,3), environment, mailBox));
+        listeAgents.add(new Agent(imVertClair, new Coordinate(4,4), new Coordinate(0,3), environment, mailBox));
+        listeAgents.add(new Agent(imBleuClair, new Coordinate(0,1), new Coordinate(4,1), environment, mailBox));
         listeAgents = listeAgents.subList(0, nbAgents);
 
         environment.setListeAgents(listeAgents);

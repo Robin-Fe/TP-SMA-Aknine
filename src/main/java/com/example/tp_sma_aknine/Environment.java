@@ -12,8 +12,8 @@ public class Environment extends Observable {
         this.map = new Agent[xLength][yLength];
     }
 
-    public Agent getContent(int x, int y) {
-        return map[x][y];
+    public Agent getContent(Coordinate coordinate) {
+        return map[coordinate.getX()][coordinate.getY()];
     }
 
     public int getXLength() {
@@ -31,19 +31,19 @@ public class Environment extends Observable {
     public void setListeAgents(List<Agent> listeAgents) {
         this.listeAgents = listeAgents;
         for (Agent agent : listeAgents) {
-            map[agent.getX()][agent.getY()] = agent;
+            map[agent.getPosition().getX()][agent.getPosition().getY()] = agent;
         }
         setChanged();
         notifyObservers();
     }
 
-    public void updateMap(Agent agent, int oldX, int oldY, int newX, int newY) {
+    public void updateMap(Agent agent, Coordinate oldPosition, Coordinate newPosition) {
         semaphore = true;
         setChanged();
         notifyObservers();
-        assert this.map[oldX][oldY] == agent && this.map[newX][newY] == null;
-        this.map[oldX][oldY] = null;
-        this.map[newX][newY] = agent;
+        assert this.map[oldPosition.getX()][oldPosition.getY()] == agent && this.map[newPosition.getX()][newPosition.getY()] == null;
+        this.map[oldPosition.getX()][oldPosition.getY()]= null;
+        this.map[newPosition.getX()][newPosition.getY()] = agent;
         setChanged();
         notifyObservers();
     }
