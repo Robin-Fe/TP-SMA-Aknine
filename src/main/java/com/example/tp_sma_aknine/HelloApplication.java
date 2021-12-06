@@ -93,7 +93,7 @@ public class HelloApplication extends Application {
         primaryStage.setTitle("Simulation de tri multi-agents");
 
 
-        Simulation simulation = new Simulation(5, 5, 5);
+        Simulation simulation = new Simulation(13, 5, 5);
 
         GridPane grid = new GridPane();
         GridPane grid3 = new GridPane();

@@ -1,6 +1,9 @@
 package com.example.tp_sma_aknine;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 public class Coordinate {
 
@@ -57,5 +60,29 @@ public class Coordinate {
         return Objects.hash(x, y);
     }
 
+    public List<Coordinate> getAroundCoordinates(int maxX, int maxY){
+        List<Coordinate> coordinates = new ArrayList<>();
+        coordinates.add(this.getUp(maxY));
+        coordinates.add(this.getDown());
+        coordinates.add(this.getRight(maxX));
+        coordinates.add(this.getLeft());
+        return coordinates;
+    }
 
+    public List<Coordinate> getDirection(Coordinate goal, int maxX, int maxY){
+        ArrayList<Coordinate> goalDirections = new ArrayList<>();
+        if (goal.getX() > this.getX()) {
+            goalDirections.add(this.getRight(maxX));
+        }
+        if (goal.getX() < this.getX()) {
+            goalDirections.add(this.getLeft());
+        }
+        if (goal.getY() > this.getY()) {
+            goalDirections.add(this.getUp(maxY));
+        }
+        if (goal.getY() < this.getY()) {
+            goalDirections.add(this.getDown());
+        }
+        return goalDirections;
+    }
 }

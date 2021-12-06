@@ -2,10 +2,7 @@ package com.example.tp_sma_aknine;
 
 import javafx.scene.image.Image;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Observable;
-import java.util.Random;
+import java.util.*;
 
 
 public class Agent extends Observable implements Runnable {
@@ -15,18 +12,34 @@ public class Agent extends Observable implements Runnable {
     private Coordinate goal;
     private final Environment environment;
     private MailBox mailBox;
+    private final double e;
 
-
-    public Agent(Image image, Coordinate position, Coordinate goal, Environment environment, MailBox mailBox) {
+    public Agent(Image image, Coordinate position, Coordinate goal, Environment environment, MailBox mailBox, double e) {
         this.worker = new Thread(this);
         this.image = image;
         this.position = position;
         this.goal = goal;
         this.environment = environment;
         this.mailBox = mailBox;
+        this.e = e;
     }
 
+    @Override
+    public void run() {
+        int timeTime = 700;
+        while (!environment.getListeAgents().get(0).checkGlobalGoal()) {
+            if (this.checkMailBox() || !this.checkPersonalGoal()){
+                action();
+                setChanged();
+                notifyObservers();
+            }
+            try {
+                Thread.sleep(timeTime + new Random().nextInt(300));
+            } catch (InterruptedException ignored) {
 
+            }
+        }
+    }
     public void action() {
         boolean hasToMove = checkMailBox();
         if (!checkPersonalGoal() || hasToMove) {
@@ -34,11 +47,11 @@ public class Agent extends Observable implements Runnable {
                 List<Coordinate> directions = getFreeDirections();
                 if (directions.isEmpty()) {
                     broadcastMessages();
-                    // ToDo : send message to everyone around
                 } else {
                     Random rand = new Random();
                     Coordinate coordinate = directions.get(rand.nextInt(directions.size()));
                     move(coordinate);
+                    mailBox.emptyBox(this);
                 }
             } else {
                 Coordinate coordinate = getDirection();
@@ -53,7 +66,7 @@ public class Agent extends Observable implements Runnable {
     }
 
     public void move(Coordinate newPosition) {
-        if (environment.pickSemaphore() && mailBox.pickSemaphore()) {
+        if (environment.pickSemaphore()) {
             Agent agent = this.environment.getContent(newPosition);
             if (agent == null) {
                 this.environment.updateMap(this, this.position, newPosition);
@@ -62,7 +75,6 @@ public class Agent extends Observable implements Runnable {
                 this.mailBox.addMessage(agent, newPosition);
             }
             environment.letSemaphore();
-            mailBox.letSemaphore();
         } else {
             long random = new Random().nextInt(2000);
             try {
@@ -79,11 +91,10 @@ public class Agent extends Observable implements Runnable {
     }
 
     public boolean checkMailBox() {
-        if (mailBox.deliverMessages(this) != null) {
-            for (Message message : mailBox.deliverMessages(this)) {
-                if (message.getCoordinate().equals(this.position)) {
-                    return true;
-                }
+        LinkedList<Message> messages = mailBox.deliverMessages(this);
+        for (Message message : messages) {
+            if (message.getCoordinate().equals(this.position)) {
+                return true;
             }
         }
         return false;
@@ -107,20 +118,7 @@ public class Agent extends Observable implements Runnable {
     }
 
 
-    @Override
-    public void run() {
-        int tempspause = 700;
-        while (!environment.getListeAgents().get(0).checkGlobalGoal()) {
-            action();
-            setChanged();
-            notifyObservers();
-            try {
-                Thread.sleep(tempspause + new Random().nextInt(300));
-            } catch (InterruptedException ignored) {
 
-            }
-        }
-    }
 
     public void interrupt() {
         worker.interrupt();
@@ -137,65 +135,48 @@ public class Agent extends Observable implements Runnable {
 
     public List<Coordinate> getFreeDirections() {
         List<Coordinate> freeDirections = new ArrayList<>();
-        Coordinate up = this.position.getUp(environment.getYLength());
-        Coordinate down = this.position.getDown();
-        Coordinate right = this.position.getRight(environment.getXLength());
-        Coordinate left = this.position.getLeft();
-        if (up != null)
-            freeDirections.add(up);
-        if (down != null)
-            freeDirections.add(down);
-        if (right != null)
-            freeDirections.add(right);
-        if (left != null)
-            freeDirections.add(left);
+        for (Coordinate coordinate : this.position.getAroundCoordinates(environment.getXLength(), environment.getYLength())) {
+            if (coordinate != null) {
+                freeDirections.add(coordinate);
+            }
+        }
         return freeDirections;
     }
 
     public Coordinate getDirection() {
         // ToDo : probabilist in case where it blocks
-        ArrayList<Coordinate> objectiveDirections = new ArrayList<>();
-        if (goal.getX() > position.getX()) {
-            objectiveDirections.add(position.getRight(environment.getXLength()));
-        }
-        if (goal.getX() < position.getX()) {
-            objectiveDirections.add(position.getLeft());
-        }
-        if (goal.getY() > position.getY()) {
-            objectiveDirections.add(position.getUp(environment.getYLength()));
-        }
-        if (goal.getY() < position.getY()) {
-            objectiveDirections.add(position.getDown());
-        }
+        List<Coordinate> objectiveDirections = this.position.getDirection(this.goal, environment.getXLength(), environment.getYLength());
         List<Coordinate> freeDirections = getFreeDirections();
-        List<Coordinate> bestDirections = (List<Coordinate>) objectiveDirections.clone();
-        for (Coordinate coordinate : objectiveDirections) {
-            if (!(freeDirections.contains(coordinate))) {
-                bestDirections.remove(coordinate);
+        List<Coordinate> bestDirections = new ArrayList<>();
+        if (Math.random() <= e){
+            for (Coordinate coordinate : objectiveDirections){
+                bestDirections.add(coordinate);
+            }
+            for (Coordinate coordinate : objectiveDirections) {
+                if (!(freeDirections.contains(coordinate))) {
+                    bestDirections.remove(coordinate);
+                }
+            }
+            if (bestDirections.isEmpty()) {
+                Random rand = new Random();
+                return objectiveDirections.get(rand.nextInt(objectiveDirections.size()));
+            } else {
+                Random rand = new Random();
+                return bestDirections.get(rand.nextInt(bestDirections.size()));
             }
         }
-        if (bestDirections.isEmpty()) {
+        else {
             Random rand = new Random();
-            return objectiveDirections.get(rand.nextInt(objectiveDirections.size()));
-        } else {
-            Random rand = new Random();
-            return bestDirections.get(rand.nextInt(bestDirections.size()));
+            return freeDirections.get(rand.nextInt(freeDirections.size()));
         }
     }
 
     public void broadcastMessages() {
-        Coordinate up = this.position.getUp(environment.getYLength());
-        Coordinate down = this.position.getDown();
-        Coordinate right = this.position.getRight(environment.getXLength());
-        Coordinate left = this.position.getLeft();
-        if (up != null)
-            sendMessage(environment.getContent(up), up);
-        if (down != null)
-            sendMessage(environment.getContent(down), down);
-        if (left != null)
-            sendMessage(environment.getContent(left), left);
-        if (right != null)
-            sendMessage(environment.getContent(right), right);
+        for (Coordinate coordinate : this.position.getAroundCoordinates(environment.getXLength(), environment.getYLength())) {
+            if (coordinate != null) {
+                sendMessage(environment.getContent(coordinate), coordinate);
+            }
+        }
     }
 
     public Coordinate getPosition() {
