@@ -83,6 +83,16 @@ public class Coordinate {
         if (goal.getY() < this.getY()) {
             goalDirections.add(this.getDown());
         }
+        System.out.println("aaaaaa");
+        System.out.println(goalDirections.size());
+        if (goalDirections.size() == 0){
+            goalDirections.add(this.getUp(maxY));
+            goalDirections.add(this.getDown());
+            goalDirections.add(this.getRight(maxX));
+            goalDirections.add(this.getLeft());
+            goalDirections.removeAll(null);
+        }
+
         return goalDirections;
     }
 }

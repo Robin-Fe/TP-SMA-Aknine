@@ -9,12 +9,13 @@ public class Agent extends Observable implements Runnable {
     public Thread worker;
     private final Image image;
     private Coordinate position;
-    private Coordinate goal;
+    private final Coordinate goal;
     private final Environment environment;
-    private MailBox mailBox;
+    private final MailBox mailBox;
     private final double e;
+    private final Politique politique;
 
-    public Agent(Image image, Coordinate position, Coordinate goal, Environment environment, MailBox mailBox, double e) {
+    public Agent(Image image, Coordinate position, Coordinate goal, Environment environment, MailBox mailBox, double e, Politique politique) {
         this.worker = new Thread(this);
         this.image = image;
         this.position = position;
@@ -22,14 +23,15 @@ public class Agent extends Observable implements Runnable {
         this.environment = environment;
         this.mailBox = mailBox;
         this.e = e;
+        this.politique = politique;
     }
 
     @Override
     public void run() {
         int timeTime = 700;
         while (!environment.getListeAgents().get(0).checkGlobalGoal()) {
-            if (this.checkMailBox() || !this.checkPersonalGoal()){
-                action();
+            if (politique.isPriority(this)) {
+                politique.action(this);
                 setChanged();
                 notifyObservers();
             }
@@ -40,29 +42,13 @@ public class Agent extends Observable implements Runnable {
             }
         }
     }
-    public void action() {
-        boolean hasToMove = checkMailBox();
-        if (!checkPersonalGoal() || hasToMove) {
-            if (hasToMove) {
-                List<Coordinate> directions = getFreeDirections();
-                if (directions.isEmpty()) {
-                    broadcastMessages();
-                } else {
-                    Random rand = new Random();
-                    Coordinate coordinate = directions.get(rand.nextInt(directions.size()));
-                    move(coordinate);
-                    mailBox.emptyBox(this);
-                }
-            } else {
-                Coordinate coordinate = getDirection();
-                Agent agent = this.environment.getContent(coordinate);
-                if (agent == null) {
-                    move(coordinate);
-                } else {
-                    sendMessage(agent, coordinate);
-                }
-            }
-        }
+
+    public Environment getEnvironment() {
+        return this.environment;
+    }
+
+    public MailBox getMailBox() {
+        return this.mailBox;
     }
 
     public void move(Coordinate newPosition) {
@@ -118,8 +104,6 @@ public class Agent extends Observable implements Runnable {
     }
 
 
-
-
     public void interrupt() {
         worker.interrupt();
         setChanged();
@@ -144,12 +128,11 @@ public class Agent extends Observable implements Runnable {
     }
 
     public Coordinate getDirection() {
-        // ToDo : probabilist in case where it blocks
         List<Coordinate> objectiveDirections = this.position.getDirection(this.goal, environment.getXLength(), environment.getYLength());
         List<Coordinate> freeDirections = getFreeDirections();
         List<Coordinate> bestDirections = new ArrayList<>();
-        if (Math.random() <= e){
-            for (Coordinate coordinate : objectiveDirections){
+        if (Math.random() <= e) {
+            for (Coordinate coordinate : objectiveDirections) {
                 bestDirections.add(coordinate);
             }
             for (Coordinate coordinate : objectiveDirections) {
@@ -159,13 +142,15 @@ public class Agent extends Observable implements Runnable {
             }
             if (bestDirections.isEmpty()) {
                 Random rand = new Random();
-                return objectiveDirections.get(rand.nextInt(objectiveDirections.size()));
+                System.out.println(objectiveDirections.size());
+                Coordinate coord = objectiveDirections.get(rand.nextInt(objectiveDirections.size()));
+                System.out.println(coord);
+                return coord;
             } else {
                 Random rand = new Random();
                 return bestDirections.get(rand.nextInt(bestDirections.size()));
             }
-        }
-        else {
+        } else {
             Random rand = new Random();
             return freeDirections.get(rand.nextInt(freeDirections.size()));
         }
@@ -185,5 +170,12 @@ public class Agent extends Observable implements Runnable {
 
     public Coordinate getGoal() {
         return this.goal;
+    }
+
+    public boolean isGoalOnBorder(int borderLvl) {
+        return this.goal.getX() == borderLvl ||
+                this.goal.getY() == borderLvl ||
+                this.goal.getX() == environment.getXLength() - 1 - borderLvl ||
+                this.goal.getY() == environment.getYLength() - 1 - borderLvl;
     }
 }

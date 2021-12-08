@@ -35,6 +35,9 @@ public class MailBox {
                 removeAgent = agent;
             }
         }
-        this.box.remove(removeAgent);
+        assert removeAgent != null;
+//        if (removeAgent.getPosition().equals(this.box.get(removeAgent).getLast().getCoordinate())){
+//            this.box.remove(removeAgent);
+//        }
     }
 }
