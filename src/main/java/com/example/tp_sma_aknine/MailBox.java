@@ -6,6 +6,7 @@ import java.util.Map;
 
 public class MailBox {
     private final HashMap<Agent, LinkedList<Message>> box = new HashMap<>();
+    private boolean semaphore = true;
 
     public MailBox() {}
 
@@ -25,7 +26,22 @@ public class MailBox {
         return new LinkedList<>();
     }
 
+    public boolean getSemaphore() {
+        return semaphore;
+    }
 
+    public boolean pickSemaphore() {
+        // ToDo : increment score
+        if (getSemaphore()) {
+            semaphore = false;
+            return true;
+        }
+        return false;
+    }
+
+    public void letSemaphore() {
+        semaphore = true;
+    }
 
     public void emptyBox(Agent checker){
         Agent removeAgent = null;

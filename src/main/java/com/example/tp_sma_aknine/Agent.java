@@ -28,7 +28,7 @@ public class Agent extends Observable implements Runnable {
 
     @Override
     public void run() {
-        int timeTime = 700;
+        int timeTime = 500;
         while (!environment.getListeAgents().get(0).checkGlobalGoal()) {
             if (politique.isPriority(this)) {
                 politique.action(this);
@@ -62,9 +62,8 @@ public class Agent extends Observable implements Runnable {
             }
             environment.letSemaphore();
         } else {
-            long random = new Random().nextInt(2000);
             try {
-                Thread.sleep(random);
+                Thread.sleep(new Random().nextInt(500));
             } catch (InterruptedException ignored) {
 
             }
@@ -73,14 +72,32 @@ public class Agent extends Observable implements Runnable {
 
 
     public void sendMessage(Agent agent, Coordinate coordinate) {
-        this.mailBox.addMessage(agent, coordinate);
+        if (mailBox.pickSemaphore()) {
+            this.mailBox.addMessage(agent, coordinate);
+            mailBox.letSemaphore();
+        } else {
+            try {
+                Thread.sleep(new Random().nextInt(100));
+            } catch (InterruptedException ignored) {
+
+            }
+        }
     }
 
     public boolean checkMailBox() {
-        LinkedList<Message> messages = mailBox.deliverMessages(this);
-        for (Message message : messages) {
-            if (message.getCoordinate().equals(this.position)) {
-                return true;
+        if (mailBox.pickSemaphore()) {
+            LinkedList<Message> messages = mailBox.deliverMessages(this);
+            for (Message message : messages) {
+                if (message.getCoordinate().equals(this.position)) {
+                    return true;
+                }
+            }
+            mailBox.letSemaphore();
+        } else {
+            try {
+                Thread.sleep(new Random().nextInt(100));
+            } catch (InterruptedException ignored) {
+
             }
         }
         return false;
@@ -102,7 +119,6 @@ public class Agent extends Observable implements Runnable {
     public Image getImage() {
         return image;
     }
-
 
     public void interrupt() {
         worker.interrupt();
