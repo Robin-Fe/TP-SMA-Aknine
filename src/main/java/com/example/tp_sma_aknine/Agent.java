@@ -89,6 +89,7 @@ public class Agent extends Observable implements Runnable {
             LinkedList<Message> messages = mailBox.deliverMessages(this);
             for (Message message : messages) {
                 if (message.getCoordinate().equals(this.position)) {
+                    mailBox.letSemaphore();
                     return true;
                 }
             }
@@ -158,9 +159,7 @@ public class Agent extends Observable implements Runnable {
             }
             if (bestDirections.isEmpty()) {
                 Random rand = new Random();
-                System.out.println(objectiveDirections.size());
                 Coordinate coord = objectiveDirections.get(rand.nextInt(objectiveDirections.size()));
-                System.out.println(coord);
                 return coord;
             } else {
                 Random rand = new Random();

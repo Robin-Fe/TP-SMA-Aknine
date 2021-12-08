@@ -17,7 +17,7 @@ public class Simulation extends Observable implements Runnable {
     public Simulation(int nbAgents, int xLength, int yLength) {
         double e = 0.9;
         Environment environment = new Environment(xLength, yLength);
-        Politique politique = new BorderPolitique();
+        Politique politique = new NaivePolitique();
         MailBox mailBox = new MailBox();
         List<Agent> listeAgents = new ArrayList<>();
         Image imBlanc = new Image("https://www.marianne38.com/wp-content/uploads/cardstock-florence-white-1.jpg", 50, 50, false, false);

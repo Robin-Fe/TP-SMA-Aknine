@@ -41,10 +41,6 @@ public class Environment extends Observable {
     }
 
     public void updateMap(Agent agent, Coordinate oldPosition, Coordinate newPosition) {
-        semaphore = true;
-        setChanged();
-        notifyObservers();
-        assert this.map[oldPosition.getX()][oldPosition.getY()] == agent && this.map[newPosition.getX()][newPosition.getY()] == null;
         this.map[oldPosition.getX()][oldPosition.getY()] = null;
         this.map[newPosition.getX()][newPosition.getY()] = agent;
         setChanged();
