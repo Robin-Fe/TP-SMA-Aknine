@@ -137,9 +137,7 @@ public class Agent extends Observable implements Runnable {
     public List<Coordinate> getFreeDirections() {
         List<Coordinate> freeDirections = new ArrayList<>();
         for (Coordinate coordinate : this.position.getAroundCoordinates(environment.getXLength(), environment.getYLength())) {
-            if (coordinate != null) {
-                freeDirections.add(coordinate);
-            }
+            freeDirections.add(coordinate);
         }
         return freeDirections;
     }
@@ -173,9 +171,7 @@ public class Agent extends Observable implements Runnable {
 
     public void broadcastMessages() {
         for (Coordinate coordinate : this.position.getAroundCoordinates(environment.getXLength(), environment.getYLength())) {
-            if (coordinate != null) {
-                sendMessage(environment.getContent(coordinate), coordinate);
-            }
+            sendMessage(environment.getContent(coordinate), coordinate);
         }
     }
 

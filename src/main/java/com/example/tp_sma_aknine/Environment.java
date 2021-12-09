@@ -1,18 +1,17 @@
 package com.example.tp_sma_aknine;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Observable;
+import java.util.*;
 
 public class Environment extends Observable {
     private List<Agent> listeAgents;
     private Agent[][] map;
+    private boolean[][] cornersMap;
     private boolean semaphore = true;
     private int bordelLvl = 0;
 
     public Environment(int xLength, int yLength) {
         this.map = new Agent[xLength][yLength];
+        HashMap<Integer, Agent> lvlMap = new HashMap<>();
     }
 
     public Agent getContent(Coordinate coordinate) {
@@ -69,19 +68,20 @@ public class Environment extends Observable {
     }
 
     public int getBorderLvl() {
-        List<Agent> leftBorder = new ArrayList<>();
-        List<Agent> upBorder = Arrays.asList(this.map[bordelLvl]);
-        List<Agent> downBorder = Arrays.asList(this.map[bordelLvl]);
-        List<Agent> rightBorder = new ArrayList<>();
-        for (int column = 0; column < getYLength(); column++) {
-            leftBorder.add(this.map[column][bordelLvl]);
-            rightBorder.add(this.map[column][getYLength() - 1 - bordelLvl]);
-        }
         List<Agent> borderAgents = new ArrayList<>();
-        borderAgents.addAll(rightBorder);
-        borderAgents.addAll(leftBorder);
-        borderAgents.addAll(upBorder);
-        borderAgents.addAll(downBorder);
+        for (Agent[] agents : this.map) {
+            for (Agent agent : agents) {
+                if (agent != null){
+                    if (agent.getGoal().getX() == bordelLvl
+                            || agent.getGoal().getY() == bordelLvl
+                            || agent.getGoal().getX() == getXLength() - 1 - bordelLvl
+                            || agent.getGoal().getY() == getYLength() - 1 - bordelLvl) {
+                        borderAgents.add(agent);
+                    }
+                }
+
+            }
+        }
         boolean increment = true;
         for (Agent agent : borderAgents) {
             if (agent != null) {
@@ -95,4 +95,40 @@ public class Environment extends Observable {
         }
         return this.bordelLvl;
     }
+
+    public void updateCornerMap(){
+        List<Agent> cornerAgents = new ArrayList<>();
+        for (Agent[] agents : this.map) {
+            for (Agent agent : agents) {
+                if (agent != null){
+                    if (agent.getGoal().getX() == bordelLvl
+                            || agent.getGoal().getY() == bordelLvl
+                            || agent.getGoal().getX() == getXLength() - 1 - bordelLvl
+                            || agent.getGoal().getY() == getYLength() - 1 - bordelLvl) {
+                        cornerAgents.add(agent);
+                    }
+                }
+
+            }
+        }
+    }
+
+    public boolean isCorner(Coordinate coordinate){
+        if ((coordinate.getX()==0 && coordinate.getY()==0)
+        ||(coordinate.getX()==0 && coordinate.getY() == getYLength()-1)
+        ||(coordinate.getX()== getXLength()-1 && coordinate.getY()==0)
+        ||(coordinate.getX() == getXLength()-1 && coordinate.getY() == getYLength()-1)){
+            return true;
+        }
+        List<Coordinate> coordinates = coordinate.getAroundCoordinates(getXLength(), getYLength());
+        List<Coordinate> removeList = new ArrayList<>();
+        for (Coordinate neighbour : coordinates){
+            if (cornersMap[neighbour.getX()][neighbour.getY()]){
+                removeList.add(neighbour);
+            }
+        }
+        coordinates.removeAll(removeList);
+        return coordinates.size() == 2;
+    }
+
 }

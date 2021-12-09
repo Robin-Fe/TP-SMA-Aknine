@@ -3,7 +3,7 @@ package com.example.tp_sma_aknine;
 import java.util.List;
 import java.util.Random;
 
-public class BorderPolitique implements Politique {
+public class CornerPolitique implements Politique {
     private int borderLvl = 0;
 
 

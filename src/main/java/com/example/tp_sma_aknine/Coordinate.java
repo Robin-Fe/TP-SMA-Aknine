@@ -1,9 +1,6 @@
 package com.example.tp_sma_aknine;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 public class Coordinate {
 
@@ -66,6 +63,7 @@ public class Coordinate {
         coordinates.add(this.getDown());
         coordinates.add(this.getRight(maxX));
         coordinates.add(this.getLeft());
+        coordinates.removeAll(Collections.singleton(null));
         return coordinates;
     }
 
@@ -89,7 +87,7 @@ public class Coordinate {
             goalDirections.add(this.getDown());
             goalDirections.add(this.getRight(maxX));
             goalDirections.add(this.getLeft());
-            goalDirections.removeAll(null);
+            goalDirections.removeAll(Collections.singleton(null));
         }
 
         return goalDirections;
