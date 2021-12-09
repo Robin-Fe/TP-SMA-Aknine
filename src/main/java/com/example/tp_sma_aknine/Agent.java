@@ -87,6 +87,9 @@ public class Agent extends Observable implements Runnable {
     public boolean checkMailBox() {
         if (mailBox.pickSemaphore()) {
             LinkedList<Message> messages = mailBox.deliverMessages(this);
+            if (politique instanceof RememberPolitique) {
+                ((RememberPolitique) politique).addForbiddenCoordinates(messages);
+            }
             for (Message message : messages) {
                 if (message.getCoordinate().equals(this.position)) {
                     mailBox.letSemaphore();
