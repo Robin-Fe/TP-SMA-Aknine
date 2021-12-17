@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 public class BorderPolitique implements Politique {
+    // La priorité est donnée aux agents sur les bords
     private int borderLvl = 0;
 
 

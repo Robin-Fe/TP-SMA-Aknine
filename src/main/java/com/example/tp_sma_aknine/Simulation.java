@@ -14,9 +14,11 @@ public class Simulation extends Observable implements Runnable {
     private int score;
 
     public Simulation(int nbAgents, int xLength, int yLength) {
-        double e = 0.9;
+        double e = 0.1;
         Environment environment = new Environment(xLength, yLength);
-        Politique politique = new BorderPolitique();
+
+        // ToDo : Change politique
+        Politique politique = new CornerPolitique();
 
         MailBox mailBox = new MailBox();
         List<Agent> listeAgents = new ArrayList<>();
@@ -44,30 +46,30 @@ public class Simulation extends Observable implements Runnable {
         Image imLGBT1 = new Image("https://thecolor.blog/wp-content/uploads/2021/02/Psicologia-del-color-naranja-930x620.png", 50, 50, false, false);
         Image imArcEnCiel = new Image("https://www.agence-akinai.com/wp-content/uploads/2019/11/couleur-signification-agence-akinai-2019-scaled-2560x1280.jpg?x36124", 50, 50, false, false);
         Image imOskour = new Image("https://fetv.cia-france.com/image/2018/11/5/1_3_colour_squares.gif%28%29%28333D85E1636DAE4AEFE4151D1E79545A%29.gif", 50, 50, false, false);
-        listeAgents.add(new Agent(imBlanc, new Coordinate(0,2), new Coordinate(3,1), environment, mailBox, e, politique));
-        listeAgents.add(new Agent(imRouge, new Coordinate(1,2), new Coordinate(1,3), environment, mailBox, e, politique));
-        listeAgents.add(new Agent(imVert, new Coordinate(3,0), new Coordinate(2,3), environment, mailBox, e, politique));
-        listeAgents.add(new Agent(imGris, new Coordinate(4,2), new Coordinate(2,4), environment, mailBox, e, politique));
-        listeAgents.add(new Agent(imBleu, new Coordinate(2,2), new Coordinate(0,1), environment, mailBox, e, politique));
-        listeAgents.add(new Agent(imCyan, new Coordinate(1,4), new Coordinate(4,0), environment, mailBox, e, politique));
-        listeAgents.add(new Agent(imJaune, new Coordinate(4,0), new Coordinate(3,3), environment, mailBox, e, politique));
-        listeAgents.add(new Agent(imMagenta, new Coordinate(3,1), new Coordinate(1,4), environment, mailBox, e, politique));
-        listeAgents.add(new Agent(imOrange, new Coordinate(0,0), new Coordinate(3,2), environment, mailBox, e, politique));
-        listeAgents.add(new Agent(imRose, new Coordinate(1,1), new Coordinate(0,4), environment, mailBox, e, politique));
-        listeAgents.add(new Agent(imMarron, new Coordinate(3,3), new Coordinate(4,3), environment, mailBox, e, politique));
-        listeAgents.add(new Agent(imVertClair, new Coordinate(4,4), new Coordinate(0,3), environment, mailBox, e, politique));
-        listeAgents.add(new Agent(imBleuClair, new Coordinate(0,1), new Coordinate(4,1), environment, mailBox, e, politique));
-        listeAgents.add(new Agent(imPoussin, new Coordinate(0,3), new Coordinate(3,4), environment, mailBox, e, politique));
-        listeAgents.add(new Agent(imBrun, new Coordinate(1,0), new Coordinate(1,2), environment, mailBox, e, politique));
-        listeAgents.add(new Agent(imChatain, new Coordinate(3,2), new Coordinate(2,1), environment, mailBox, e, politique));
-        listeAgents.add(new Agent(imPink, new Coordinate(4,1), new Coordinate(2,2), environment, mailBox, e, politique));
-        listeAgents.add(new Agent(imPinkMag, new Coordinate(2,0), new Coordinate(0,2), environment, mailBox, e, politique));
-        listeAgents.add(new Agent(imSaumon, new Coordinate(2,1), new Coordinate(4,2), environment, mailBox, e, politique));
-        listeAgents.add(new Agent(imJauneOrange, new Coordinate(1,3), new Coordinate(1,1), environment, mailBox, e, politique));
-        listeAgents.add(new Agent(imAubrun, new Coordinate(0,4), new Coordinate(1,0), environment, mailBox, e, politique));
-        listeAgents.add(new Agent(imLGBT1, new Coordinate(2,4), new Coordinate(0,0), environment, mailBox, e, politique));
-        listeAgents.add(new Agent(imArcEnCiel, new Coordinate(3,4), new Coordinate(2,0), environment, mailBox, e, politique));
-        listeAgents.add(new Agent(imOskour, new Coordinate(2,3), new Coordinate(4,4), environment, mailBox, e, politique));
+        listeAgents.add(new Agent(imBlanc, new Coordinate(0,2), new Coordinate(3,1), environment, mailBox, e, politique, "blanc"));
+        listeAgents.add(new Agent(imRouge, new Coordinate(1,2), new Coordinate(1,3), environment, mailBox, e, politique, "rouge"));
+        listeAgents.add(new Agent(imVert, new Coordinate(3,0), new Coordinate(2,3), environment, mailBox, e, politique, "vert foncé"));
+        listeAgents.add(new Agent(imGris, new Coordinate(4,2), new Coordinate(2,4), environment, mailBox, e, politique, "gris"));
+        listeAgents.add(new Agent(imBleu, new Coordinate(2,2), new Coordinate(0,1), environment, mailBox, e, politique, "bleu foncé"));
+        listeAgents.add(new Agent(imCyan, new Coordinate(1,4), new Coordinate(4,0), environment, mailBox, e, politique, "cyan"));
+        listeAgents.add(new Agent(imJaune, new Coordinate(4,0), new Coordinate(3,3), environment, mailBox, e, politique, "jaune"));
+        listeAgents.add(new Agent(imMagenta, new Coordinate(3,1), new Coordinate(1,4), environment, mailBox, e, politique, "magenta"));
+        listeAgents.add(new Agent(imOrange, new Coordinate(0,0), new Coordinate(3,2), environment, mailBox, e, politique, "orange"));
+        listeAgents.add(new Agent(imRose, new Coordinate(1,1), new Coordinate(0,4), environment, mailBox, e, politique, "rose"));
+        listeAgents.add(new Agent(imMarron, new Coordinate(3,3), new Coordinate(4,3), environment, mailBox, e, politique, "marron"));
+        listeAgents.add(new Agent(imVertClair, new Coordinate(4,4), new Coordinate(0,3), environment, mailBox, e, politique, "vert clair"));
+        listeAgents.add(new Agent(imBleuClair, new Coordinate(0,1), new Coordinate(4,1), environment, mailBox, e, politique, "bleu clair"));
+        listeAgents.add(new Agent(imPoussin, new Coordinate(0,3), new Coordinate(3,4), environment, mailBox, e, politique, "poussin"));
+        listeAgents.add(new Agent(imBrun, new Coordinate(1,0), new Coordinate(1,2), environment, mailBox, e, politique, "brun"));
+        listeAgents.add(new Agent(imChatain, new Coordinate(3,2), new Coordinate(2,1), environment, mailBox, e, politique, "chatain"));
+        listeAgents.add(new Agent(imPink, new Coordinate(4,1), new Coordinate(2,2), environment, mailBox, e, politique, "pink"));
+        listeAgents.add(new Agent(imPinkMag, new Coordinate(2,0), new Coordinate(0,2), environment, mailBox, e, politique, "pinkMag"));
+        listeAgents.add(new Agent(imSaumon, new Coordinate(2,1), new Coordinate(4,2), environment, mailBox, e, politique, "saumon"));
+        listeAgents.add(new Agent(imJauneOrange, new Coordinate(1,3), new Coordinate(1,1), environment, mailBox, e, politique, "jaune orange"));
+        listeAgents.add(new Agent(imAubrun, new Coordinate(0,4), new Coordinate(1,0), environment, mailBox, e, politique, "aubrun"));
+        listeAgents.add(new Agent(imLGBT1, new Coordinate(2,4), new Coordinate(0,0), environment, mailBox, e, politique, "lgbt"));
+        listeAgents.add(new Agent(imArcEnCiel, new Coordinate(3,4), new Coordinate(2,0), environment, mailBox, e, politique, "arc en ciel"));
+        listeAgents.add(new Agent(imOskour, new Coordinate(2,3), new Coordinate(4,4), environment, mailBox, e, politique, "oskour"));
         listeAgents = listeAgents.subList(0, nbAgents);
 
         environment.setListeAgents(listeAgents);

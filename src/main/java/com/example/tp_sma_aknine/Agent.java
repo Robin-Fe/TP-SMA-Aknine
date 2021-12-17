@@ -6,6 +6,7 @@ import java.util.*;
 
 
 public class Agent extends Observable implements Runnable {
+    public String name;
     public Thread worker;
     private final Image image;
     private Coordinate position;
@@ -14,8 +15,9 @@ public class Agent extends Observable implements Runnable {
     private final MailBox mailBox;
     private final double e;
     private final Politique politique;
+    private boolean sleep;
 
-    public Agent(Image image, Coordinate position, Coordinate goal, Environment environment, MailBox mailBox, double e, Politique politique) {
+    public Agent(Image image, Coordinate position, Coordinate goal, Environment environment, MailBox mailBox, double e, Politique politique, String name) {
         this.worker = new Thread(this);
         this.image = image;
         this.position = position;
@@ -24,6 +26,8 @@ public class Agent extends Observable implements Runnable {
         this.mailBox = mailBox;
         this.e = e;
         this.politique = politique;
+        this.name = name;
+        this.sleep = false;
     }
 
     @Override
@@ -36,7 +40,7 @@ public class Agent extends Observable implements Runnable {
                 notifyObservers();
             }
             try {
-                Thread.sleep(timeTime + new Random().nextInt(300));
+                Thread.sleep(timeTime + new Random().nextInt(50));
             } catch (InterruptedException ignored) {
 
             }
@@ -63,7 +67,7 @@ public class Agent extends Observable implements Runnable {
             environment.letSemaphore();
         } else {
             try {
-                Thread.sleep(new Random().nextInt(500));
+                Thread.sleep(new Random().nextInt(50));
             } catch (InterruptedException ignored) {
 
             }
@@ -72,16 +76,20 @@ public class Agent extends Observable implements Runnable {
 
 
     public void sendMessage(Agent agent, Coordinate coordinate) {
-        if (mailBox.pickSemaphore()) {
-            this.mailBox.addMessage(agent, coordinate);
-            mailBox.letSemaphore();
-        } else {
-            try {
-                Thread.sleep(new Random().nextInt(100));
-            } catch (InterruptedException ignored) {
+        if (agent.getSleep() != true){
+            if (mailBox.pickSemaphore()) {
+                this.mailBox.addMessage(agent, coordinate);
+                mailBox.letSemaphore();
+            } else {
+                try {
+                    Thread.sleep(new Random().nextInt(100));
+                } catch (InterruptedException ignored) {
 
+                }
             }
         }
+
+
     }
 
     public boolean checkMailBox() {
@@ -99,7 +107,7 @@ public class Agent extends Observable implements Runnable {
             mailBox.letSemaphore();
         } else {
             try {
-                Thread.sleep(new Random().nextInt(100));
+                Thread.sleep(new Random().nextInt(50));
             } catch (InterruptedException ignored) {
 
             }
@@ -149,7 +157,7 @@ public class Agent extends Observable implements Runnable {
         List<Coordinate> objectiveDirections = this.position.getDirection(this.goal, environment.getXLength(), environment.getYLength());
         List<Coordinate> freeDirections = getFreeDirections();
         List<Coordinate> bestDirections = new ArrayList<>();
-        if (Math.random() <= e) {
+        if (Math.random() >= e) {
             for (Coordinate coordinate : objectiveDirections) {
                 bestDirections.add(coordinate);
             }
@@ -191,5 +199,22 @@ public class Agent extends Observable implements Runnable {
                 this.goal.getY() == borderLvl ||
                 this.goal.getX() == environment.getXLength() - 1 - borderLvl ||
                 this.goal.getY() == environment.getYLength() - 1 - borderLvl;
+    }
+
+    public boolean isGoalOnCorner(int cornerLvl) {
+        return (this.goal.getX() + this.goal.getY()) <= cornerLvl;
+    }
+
+    public boolean isUnderCorner(int cornerLvl) {
+        return (this.position.getX() + this.position.getY()) <= cornerLvl && !this.checkPersonalGoal();
+    }
+
+    public void setSleep(boolean sleep) {
+        this.sleep = sleep;
+        System.out.println("L' agent " + name + " sleep");
+    }
+
+    public boolean getSleep() {
+        return this.sleep;
     }
 }

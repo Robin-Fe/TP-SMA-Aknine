@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Random;
 
 public class CornerPolitique implements Politique {
-    private int borderLvl = 0;
-
-
+    // La priorité est donnée par diagonale. Une fois qu'une diagonale est bine complétée, elle ne changera plus
+    private int cornerLvl = 0;
     public void action(Agent agent) {
+
         if (agent.checkMailBox()) {
             List<Coordinate> directions = agent.getFreeDirections();
             if (directions.isEmpty()) {
@@ -30,8 +30,11 @@ public class CornerPolitique implements Politique {
     }
 
     public boolean isPriority(Agent agent) {
-        this.borderLvl = agent.getEnvironment().getBorderLvl();
-        return (agent.checkMailBox() || (agent.isGoalOnBorder(borderLvl) && !agent.checkPersonalGoal()));
+        if (agent.getSleep()){
+            return false;
+        }
+        this.cornerLvl = agent.getEnvironment().getCornerLvl();
+        return (agent.checkMailBox() || (agent.isGoalOnCorner(cornerLvl) && !agent.checkPersonalGoal()) || (agent.isUnderCorner(cornerLvl)));
     }
 
 
